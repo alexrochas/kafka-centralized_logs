@@ -1,0 +1,9 @@
+FROM gradle:alpine
+
+USER root
+
+WORKDIR /usr/src/app
+
+COPY ./dummy-logger /usr/src/app
+
+CMD ./gradlew bootRun
