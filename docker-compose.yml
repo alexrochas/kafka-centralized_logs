@@ -3,6 +3,7 @@ services:
   filebeat:
     hostname: filebeat
     user: root
+    container_name: filebeat
     build:
       context: .
       dockerfile: Dockerfile_filebeat
@@ -19,6 +20,7 @@ services:
 
   elasticsearch:
     image: elastic/elasticsearch:6.3.0
+    container_name: elasticsearch
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     cap_add:
@@ -51,9 +53,45 @@ services:
 
   app:
     hostname: app
+    container_name: app
     build:
       context: .
       dockerfile: Dockerfile_app
+
+  zookeeper:
+    image: confluent/zookeeper:latest
+    container_name: zookeeper
+    network_mode: "host"
+    ports:
+      - "2181:2181"
+    # volumes:
+    #   - ./config/kafka/zk.properties:/etc/kafka/zookeeper.properties
+
+  kafka:
+    image: confluent/kafka:0.10.0.0-cp1
+    container_name: kafka
+    network_mode: "host"
+    environment:
+      #- KAFKA_ADVERTISED_HOST_NAME=
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=localhost:2181
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+
+  kafdrop:
+    image: thomsch98/kafdrop
+    container_name: kafdrop
+    network_mode: "host"
+    environment:
+      # yes localhost as its a client side app outsite of the docker network on your host
+      - ZK_HOSTS=localhost:2181
+      - LISTEN=9000
+    ports:
+      - "9000:9000"
+    depends_on:
+      - zookeeper
 
 volumes:
   # create a persistent volume for Filebeat

@@ -37,17 +37,30 @@ setup.template.settings:
 # path needed if kibana not at website root
 #  path: "/kibana"
 
-output.elasticsearch:
+#output.elasticsearch:
 # if your elasticsearch is local you can change it to 127.0.0.1:9200
-  hosts: ["localhost:9200"]
-  template:
-    name: "filebeat"
-    path: "fields.yml"
-    overwrite: true
-  protocol: "http"
+#  hosts: ["localhost:9200"]
+#  template:
+#    name: "filebeat"
+#    path: "fields.yml"
+#    overwrite: true
+#  protocol: "http"
 # identification required for X-pack
 #  username: "elastic"
 #  password: "changeme"
+
+
+output.kafka:
+  # initial brokers for reading cluster metadata
+  hosts: ["localhost:9092"]
+  # message topic selection + partitioning
+  #topic: '%{[fields.log_topic]}'
+  topic: 'dummy-logger'
+  partition.round_robin:
+    reachable_only: false
+  required_acks: 1
+  compression: gzip
+  max_message_bytes: 1000000
 
 # Write Filebeat own logs only to file to avoid catching them with itself in docker log files
 logging.to_files: true
