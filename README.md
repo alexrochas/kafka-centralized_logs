@@ -86,7 +86,7 @@ logging.to_syslog: false
 
 ### Kafka
 
-Here is the star and all he does is what we expect from him. :love:
+Here is the star and all he does is what we expect from him. :heart:
 
 > Now we are in Kafka, how do we go back to elasticsearch?
 
