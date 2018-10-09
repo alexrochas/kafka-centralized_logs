@@ -1,0 +1,38 @@
+version: "3.5"
+services:
+  elasticsearch:
+    image: elastic/elasticsearch:6.3.0
+    container_name: elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    cap_add:
+      - ALL
+    network_mode: "host"
+    privileged: true
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.3.0
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_URL: http://localhost:9200
+    network_mode: "host"
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    ulimits:
+      nproc: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - ALL
+
+volumes:
+  # create a persistent volume for Filebeat
+  esdata:

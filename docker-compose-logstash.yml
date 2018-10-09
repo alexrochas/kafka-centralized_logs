@@ -1,0 +1,9 @@
+version: "3.5"
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash:5.3.0
+    container_name: logstash
+    network_mode: "host"
+    volumes:
+      - ./logstash-config/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash-config/pipeline:/usr/share/logstash/pipeline
